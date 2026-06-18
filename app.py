@@ -71,17 +71,42 @@ if st.session_state.data is not None:
 
     with tab1:
         st.subheader("Magnitude Response")
-        fig_mag = px.line(df, x='Frequency_MHz', y=['S11_Mag_dB', 'S21_Mag_dB'],
-                          labels={'value': 'Magnitude (dB)', 'Frequency_MHz': 'Frequency (MHz)'},
-                          title="S11 and S21 Magnitude Spectrum")
+        fig_mag = px.Figure()
+
+        fig_mag.add_trace(
+            px.Scatter(
+                x=df['Frequency_MHz'],
+                y=df['S11_Mag_dB'],
+                mode='lines',
+                name='S11'
+            )
+        )
+
+        fig_mag.add_trace(
+            px.Scatter(
+                x=df['Frequency_MHz'],
+                y=df['S21_Mag_dB'],
+                mode='lines',
+                name='S21'
+            )
+        )
         fig_mag.add_hline(y=-10, line_dash="dash", line_color="red", annotation_text="Standard -10dB Match Bound")
-        st.plotly_chart(fig_mag, use_container_width=True)
+        st.plotly_chart(fig_mag, width='stretch')
 
         st.subheader("S11 Phase Response")
-        fig_phase = px.line(df, x='Frequency_MHz', y='S11_Phase_deg',
-                            labels={'S11_Phase_deg': 'Phase (Degrees)'},
-                            title="S11 Phase Phase Window")
-        st.plotly_chart(fig_phase, use_container_width=True)
+        import plotly.graph_objects as go
+
+        fig_phase = px.Figure()
+
+        fig_phase.add_trace(
+            px.Scatter(
+                x=df['Frequency_MHz'],
+                y=df['S11_Phase_deg'],
+                mode='lines',
+                name='S11 Phase'
+            )
+        )
+        st.plotly_chart(fig_phase, width='stretch')
 
     with tab2:
         st.subheader("Smith Chart Representation ($S_{11}$)")
@@ -109,7 +134,7 @@ if st.session_state.data is not None:
             showlegend=False,
             height=600
         )
-        st.plotly_chart(fig_smith, use_container_width=True)
+        st.plotly_chart(fig_smith, width='stretch')
 
         # Export option
         st.download_button(

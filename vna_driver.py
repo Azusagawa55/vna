@@ -56,7 +56,7 @@ class PicoVNADriver:
 
             # Wait until measurement is finished
             while self.vna.IsMeasuring():
-                time.time.sleep(0.1)
+                time.sleep(0.1)
 
             # Retrieve data points
             points = int(self.vna.GetPoints())

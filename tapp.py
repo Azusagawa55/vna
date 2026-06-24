@@ -1,8 +1,8 @@
-import streamlit as st
-import pandas as pd
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as px
-import plotly.express as cx
+import streamlit as st
+
 from vna_driver import PicoVNADriver, MockPicoVNA
 
 st.set_page_config(page_title="PicoVNA HF Impedance Dashboard", layout="wide")

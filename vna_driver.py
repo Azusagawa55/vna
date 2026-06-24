@@ -1,6 +1,6 @@
-import os
 import sys
 import time
+
 import numpy as np
 
 # Ensure we are on Windows for COM interface

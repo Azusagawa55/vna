@@ -124,3 +124,37 @@ async function measure() {
     );
 
 }
+
+async function matching() {
+
+    let response =
+        await fetch("/matching");
+
+    let data =
+        await response.json();
+
+
+    let txt =
+
+        "Load Impedance\n\n" +
+
+        "R = " + data.R + " Ω\n" +
+        "X = " + data.X + " Ω\n\n" +
+
+        "Matching Network\n\n" +
+
+        "Q = " +
+        data.network.Q + "\n" +
+
+        data.network["Series Component"] +
+        ": " +
+        data.network["Series Value"] + "\n" +
+
+        data.network["Parallel Component"] +
+        ": " +
+        data.network["Parallel Value"];
+
+
+    alert(txt)
+
+}

@@ -1,9 +1,11 @@
 import ctypes
 import os
+from pathlib import Path
 
 import numpy as np
 
-sdk_path = os.path.abspath("./sdk")
+BASE_DIR = Path(__file__).resolve().parent
+sdk_path = str(BASE_DIR / "sdk")
 
 os.add_dll_directory(sdk_path)
 
@@ -15,7 +17,7 @@ dll = ctypes.CDLL(
 )
 
 
-def magnitude_db(value):
+def logmag_db(value):
     gamma = np.sqrt(
         value.real ** 2 + value.imag ** 2
     )
@@ -119,6 +121,28 @@ class PicoVNA:
                 "error": str(e)
             }
 
+    def load_calibration(self, cal_file_path):
+        """Loads a pre-saved PicoVNA .cal calibration file into the DLL engine."""
+        if not self.handle.value:
+            return {"error": "VNA must be connected before loading calibration"}
+
+        try:
+            # Check your SDK documentation for the exact string function variant
+            # (Sometimes requires ctypes.c_char_p encoded to utf-8)
+            dll.vna_load_calibration_file.argtypes = [
+                ctypes.c_void_p,
+                ctypes.c_char_p
+            ]
+            dll.vna_load_calibration_file.restype = ctypes.c_int
+
+            path_bytes = cal_file_path.encode('utf-8')
+            status = dll.vna_load_calibration_file(self.handle, path_bytes)
+
+            return {"status": status, "success": status == 0}
+        except AttributeError:
+            return {"error": "Could not find calibration load function in vna.dll. Check SDK docs for exact name."}
+
+
     def configure_sweep(
             self,
             start_freq,
@@ -214,10 +238,10 @@ class PicoVNA:
 
             frequencies = []
 
-            magnitude = []
-            s21_magnitude = []
-            s12_magnitude = []
-            s22_magnitude = []
+            s11_logmag = []
+            s21_logmag = []
+            s12_logmag = []
+            s22_logmag = []
 
             real = []
 
@@ -246,8 +270,8 @@ class PicoVNA:
                 real.append(float(re))
                 imag.append(float(im))
 
-                magnitude.append(
-                    magnitude_db(p.s11)
+                s11_logmag.append(
+                    logmag_db(p.s11)
                 )
 
                 s21_re = p.s21.real
@@ -256,8 +280,8 @@ class PicoVNA:
                 s21_real.append(float(s21_re))
                 s21_imag.append(float(s21_im))
 
-                s21_magnitude.append(
-                    magnitude_db(p.s21)
+                s21_logmag.append(
+                    logmag_db(p.s21)
                 )
 
                 s12_re = p.s12.real
@@ -266,8 +290,8 @@ class PicoVNA:
                 s12_real.append(float(s12_re))
                 s12_imag.append(float(s12_im))
 
-                s12_magnitude.append(
-                    magnitude_db(p.s12)
+                s12_logmag.append(
+                    logmag_db(p.s12)
                 )
 
                 s22_re = p.s22.real
@@ -276,8 +300,8 @@ class PicoVNA:
                 s22_real.append(float(s22_re))
                 s22_imag.append(float(s22_im))
 
-                s22_magnitude.append(
-                    magnitude_db(p.s22)
+                s22_logmag.append(
+                    logmag_db(p.s22)
                 )
 
             return {
@@ -285,17 +309,29 @@ class PicoVNA:
                 "frequency":
                     frequencies,
 
+                "s11_logmag":
+                    s11_logmag,
+
+                "s22_logmag":
+                    s22_logmag,
+
+                "s21_logmag":
+                    s21_logmag,
+
+                "s12_logmag":
+                    s12_logmag,
+
                 "magnitude":
-                    magnitude,
+                    s11_logmag,
 
                 "s22_magnitude":
-                    s22_magnitude,
+                    s22_logmag,
 
                 "s21_magnitude":
-                    s21_magnitude,
+                    s21_logmag,
 
                 "s12_magnitude":
-                    s12_magnitude,
+                    s12_logmag,
 
                 "s11_real":
                     real,

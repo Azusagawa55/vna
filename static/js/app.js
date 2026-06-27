@@ -29,15 +29,15 @@ async function measure() {
 
     if (
         !Array.isArray(data.frequency) ||
-        !Array.isArray(data.magnitude) ||
-        !Array.isArray(data.s21_magnitude) ||
-        !Array.isArray(data.s12_magnitude) ||
-        !Array.isArray(data.s22_magnitude) ||
+        !Array.isArray(data.s11_logmag) ||
+        !Array.isArray(data.s21_logmag) ||
+        !Array.isArray(data.s12_logmag) ||
+        !Array.isArray(data.s22_logmag) ||
         data.frequency.length === 0 ||
-        data.frequency.length !== data.magnitude.length ||
-        data.frequency.length !== data.s21_magnitude.length ||
-        data.frequency.length !== data.s12_magnitude.length ||
-        data.frequency.length !== data.s22_magnitude.length
+        data.frequency.length !== data.s11_logmag.length ||
+        data.frequency.length !== data.s21_logmag.length ||
+        data.frequency.length !== data.s12_logmag.length ||
+        data.frequency.length !== data.s22_logmag.length
     ) {
         alert("No valid measurement data was returned by the instrument.");
         return;
@@ -47,18 +47,18 @@ async function measure() {
         "s11-plot",
         [{
             x: data.frequency,
-            y: data.magnitude,
+            y: data.s11_logmag,
             type: "scatter",
             mode: "lines",
             name: "S11"
         }],
         {
-            title: "S11 Magnitude",
+            title: "S11 LogMag",
             xaxis: {
                 title: "Frequency (Hz)"
             },
             yaxis: {
-                title: "Magnitude (dB)"
+                title: "LogMag (dB)"
             }
         }
     );
@@ -67,18 +67,18 @@ async function measure() {
         "s21-plot",
         [{
             x: data.frequency,
-            y: data.s21_magnitude,
+            y: data.s21_logmag,
             type: "scatter",
             mode: "lines",
             name: "S21"
         }],
         {
-            title: "S21 Magnitude",
+            title: "S21 LogMag",
             xaxis: {
                 title: "Frequency (Hz)"
             },
             yaxis: {
-                title: "Magnitude (dB)"
+                title: "LogMag (dB)"
             }
         }
     );
@@ -87,18 +87,18 @@ async function measure() {
         "s12-plot",
         [{
             x: data.frequency,
-            y: data.s12_magnitude,
+            y: data.s12_logmag,
             type: "scatter",
             mode: "lines",
             name: "S12"
         }],
         {
-            title: "S12 Magnitude",
+            title: "S12 LogMag",
             xaxis: {
                 title: "Frequency (Hz)"
             },
             yaxis: {
-                title: "Magnitude (dB)"
+                title: "LogMag (dB)"
             }
         }
     );
@@ -107,18 +107,18 @@ async function measure() {
         "s22-plot",
         [{
             x: data.frequency,
-            y: data.s22_magnitude,
+            y: data.s22_logmag,
             type: "scatter",
             mode: "lines",
             name: "S22"
         }],
         {
-            title: "S22 Magnitude",
+            title: "S22 LogMag",
             xaxis: {
                 title: "Frequency (Hz)"
             },
             yaxis: {
-                title: "Magnitude (dB)"
+                title: "LogMag (dB)"
             }
         }
     );
